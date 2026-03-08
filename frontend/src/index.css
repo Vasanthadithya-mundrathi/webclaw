@@ -1,0 +1,69 @@
+/* WebClaw — Global Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:       #050810;
+  --bg2:      #0a0f1e;
+  --bg3:      #0f1628;
+  --surface:  rgba(15,22,40,0.85);
+  --border:   rgba(99,130,255,0.18);
+  --border2:  rgba(99,130,255,0.08);
+  --accent:   #6382ff;
+  --accent2:  #a78bfa;
+  --teal:     #2cffd0;
+  --green:    #34d399;
+  --red:      #f87171;
+  --yellow:   #fbbf24;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --glow:     rgba(99,130,255,0.1);
+  --font:     'Inter', system-ui, sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+  --radius:   12px;
+  --sidebar:  280px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { height: 100vh; display: flex; flex-direction: column; }
+
+/* Grid noise */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(99,130,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,130,255,0.025) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Utility */
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Animations */
+@keyframes fadeUp   { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
+@keyframes spin     { to { transform: rotate(360deg); } }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes slideIn  { from { transform: translateX(-100%); } to { transform: none; } }
+
+.fade-up   { animation: fadeUp .3s ease both; }
+.fade-in   { animation: fadeIn .2s ease both; }

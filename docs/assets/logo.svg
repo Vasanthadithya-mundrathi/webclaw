@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <!-- TEAL NEON GLOW -->
+    <radialGradient id="globeGlow" cx="55%" cy="45%" r="55%">
+      <stop offset="0%"   stop-color="#7c3aed" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#050810" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2cffd0"/>
+      <stop offset="100%" stop-color="#00e5aa"/>
+    </linearGradient>
+
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#9d4edd"/>
+      <stop offset="100%" stop-color="#6b21a8"/>
+    </linearGradient>
+
+    <linearGradient id="clawGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#2cffd0"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+
+    <!-- Outer neon glow filter -->
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Subtle inner glow -->
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Clip to circle -->
+    <clipPath id="circleClip">
+      <circle cx="105" cy="95" r="62"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── OUTER NEON GLOW HALO ── -->
+  <circle cx="105" cy="95" r="70" fill="none" stroke="#2cffd0" stroke-width="2" opacity="0.2" filter="url(#neonGlow)"/>
+  <circle cx="105" cy="95" r="62" fill="url(#globeGlow)"/>
+
+  <!-- ── OUTER JAGGED HEXAGON SHELL (crystal/geo facets) ── -->
+  <!-- Top spike -->
+  <polygon points="105,22 118,40 105,34 92,40" fill="none" stroke="url(#tealGrad)" stroke-width="2.2" filter="url(#neonGlow)" stroke-linejoin="round"/>
+  <!-- Top right facet -->
+  <polygon points="118,40 155,58 145,72 118,40" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.8" stroke-linejoin="round"/>
+  <!-- Right facet -->
+  <polygon points="155,58 165,98 148,105 145,72" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.8" stroke-linejoin="round"/>
+  <!-- Bottom right -->
+  <polygon points="165,98 148,138 130,125 148,105" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.7" stroke-linejoin="round"/>
+  <!-- Bottom -->
+  <polygon points="148,138 105,155 105,140 130,125" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.7" stroke-linejoin="round"/>
+  <!-- Bottom left -->
+  <polygon points="105,155 62,138 70,125 105,140" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.7" stroke-linejoin="round"/>
+  <!-- Left -->
+  <polygon points="62,138 45,98 52,90 70,125" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.8" stroke-linejoin="round"/>
+  <!-- Top left -->
+  <polygon points="45,98 55,58 70,65 52,90" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.8" stroke-linejoin="round"/>
+  <!-- Top left facet -->
+  <polygon points="55,58 92,40 70,65" fill="none" stroke="url(#tealGrad)" stroke-width="2" opacity="0.8" stroke-linejoin="round"/>
+
+  <!-- ── GLOBE GRID (latitude & longitude lines) ── -->
+  <!-- Equator -->
+  <ellipse cx="105" cy="95" rx="58" ry="16" fill="none" stroke="url(#purpleGrad)" stroke-width="1.8" opacity="0.7"/>
+  <!-- Upper parallel -->
+  <ellipse cx="105" cy="75" rx="46" ry="12" fill="none" stroke="url(#purpleGrad)" stroke-width="1.5" opacity="0.55"/>
+  <!-- Lower parallel -->
+  <ellipse cx="105" cy="115" rx="46" ry="12" fill="none" stroke="url(#purpleGrad)" stroke-width="1.5" opacity="0.55"/>
+  <!-- Meridians (vertical curves) -->
+  <path d="M 105 35 Q 135 65 105 95 Q 75 125 105 155" fill="none" stroke="url(#purpleGrad)" stroke-width="1.8" opacity="0.6"/>
+  <path d="M 105 35 Q 75 65 105 95 Q 135 125 105 155" fill="none" stroke="url(#purpleGrad)" stroke-width="1.8" opacity="0.6"/>
+  <!-- Outer prime meridian -->
+  <path d="M 105 32 Q 165 50 163 95 Q 165 140 105 157" fill="none" stroke="url(#purpleGrad)" stroke-width="1.5" opacity="0.5"/>
+  <path d="M 105 32 Q 47 50 47 95 Q 47 140 105 157" fill="none" stroke="url(#purpleGrad)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Globe node dots -->
+  <circle cx="105" cy="95" r="3.5" fill="#2cffd0" filter="url(#neonGlow)"/>
+  <circle cx="140" cy="80" r="3"   fill="#2cffd0" filter="url(#neonGlow)"/>
+  <circle cx="70"  cy="80" r="3"   fill="#2cffd0" filter="url(#neonGlow)"/>
+  <circle cx="148" cy="110" r="2.5" fill="#2cffd0" opacity="0.8"/>
+  <circle cx="62"  cy="110" r="2.5" fill="#2cffd0" opacity="0.8"/>
+  <circle cx="105" cy="135" r="2.5" fill="#2cffd0" opacity="0.8"/>
+
+  <!-- Connector lines between nodes -->
+  <line x1="105" y1="95" x2="140" y2="80"  stroke="#2cffd0" stroke-width="1.2" opacity="0.5"/>
+  <line x1="105" y1="95" x2="70"  y2="80"  stroke="#2cffd0" stroke-width="1.2" opacity="0.5"/>
+  <line x1="140" y1="80" x2="148" y2="110" stroke="#2cffd0" stroke-width="1"   opacity="0.4"/>
+  <line x1="70"  y1="80" x2="62"  y2="110" stroke="#2cffd0" stroke-width="1"   opacity="0.4"/>
+
+  <!-- ── CLAW / CRAB BODY (centre, in front of globe) ── -->
+  <!-- Upper body arch (abdomen) -->
+  <path d="M 80 80 Q 105 62 130 80 L 125 100 Q 105 112 85 100 Z"
+        fill="none" stroke="url(#clawGrad)" stroke-width="3"
+        stroke-linejoin="round" filter="url(#neonGlow)"/>
+
+  <!-- Left upper claw arm -->
+  <path d="M 80 80 L 62 60 L 55 68 L 50 58 L 65 48 L 82 68"
+        fill="none" stroke="url(#clawGrad)" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round" filter="url(#neonGlow)"/>
+
+  <!-- Left lower claw arm -->
+  <path d="M 85 100 L 66 118 L 58 112 L 52 122 L 65 130 L 88 112"
+        fill="none" stroke="url(#clawGrad)" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round" filter="url(#neonGlow)"/>
+
+  <!-- Left claw pincer gap fill -->
+  <line x1="55" y1="68" x2="52" y2="58" stroke="url(#clawGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="58" y1="112" x2="52" y2="122" stroke="url(#clawGrad)" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Circuit trace extending from lower left claw (signature detail) -->
+  <path d="M 52 122 L 40 135 L 34 135" stroke="#2cffd0" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.9" filter="url(#softGlow)"/>
+  <path d="M 34 135 L 34 142" stroke="#2cffd0" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+  <!-- Circuit end dots -->
+  <circle cx="34" cy="135" r="2"   fill="#2cffd0" filter="url(#neonGlow)"/>
+  <circle cx="34" cy="142" r="3"   fill="#2cffd0" filter="url(#neonGlow)"/>
+  <circle cx="22" cy="142" r="2.2" fill="none" stroke="#2cffd0" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Additional trace line upper left -->
+  <path d="M 50 58 L 38 48 L 32 48" stroke="#2cffd0" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <circle cx="32" cy="48" r="2" fill="#2cffd0" opacity="0.7"/>
+
+  <!-- ── OUTER NEON CIRCLE (clean ring) ── -->
+  <circle cx="105" cy="95" r="63" fill="none" stroke="#2cffd0" stroke-width="2.5"
+          opacity="0.6" filter="url(#neonGlow)"/>
+  <!-- Inner ring -->
+  <circle cx="105" cy="95" r="58" fill="none" stroke="#9d4edd" stroke-width="1.2" opacity="0.4"/>
+</svg>

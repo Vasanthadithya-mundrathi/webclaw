@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebClaw — Browser-Native AI Agent</title>
+  <meta name="description" content="WebClaw is the world's first browser-native AI agent with WebGPU compute, self-evolving gene strategies, and full browser tab control. Zero install. Runs in 30 seconds." />
+  <meta property="og:title" content="WebClaw — Browser-Native AI Agent" />
+  <meta property="og:description" content="Zero install. WebGPU-powered. Self-evolving. Your personal AI agent runs entirely in the browser." />
+  <meta property="og:image" content="assets/og-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #050810;
+      --bg2:       #0a0f1e;
+      --bg3:       #0f1628;
+      --border:    rgba(99,130,255,0.15);
+      --border2:   rgba(99,130,255,0.08);
+      --accent:    #6382ff;
+      --accent2:   #a78bfa;
+      --accent3:   #38bdf8;
+      --green:     #34d399;
+      --red:       #f87171;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --card:      rgba(15,22,40,0.8);
+      --glow:      rgba(99,130,255,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Grid noise background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(99,130,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,130,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+    .orb-1 { width: 600px; height: 600px; background: #3b3fff; top: -200px; left: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: #7c3aed; bottom: 0; right: -150px; }
+    .orb-3 { width: 300px; height: 300px; background: #0284c7; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    section, nav, footer { position: relative; z-index: 1; }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border2);
+      backdrop-filter: blur(20px);
+      background: rgba(5,8,16,0.7);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.1rem; color: #fff; text-decoration: none; }
+    .nav-logo .claw { font-size: 1.5rem; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #fff; padding: .5rem 1.25rem;
+      border-radius: 8px; font-weight: 600; font-size: .875rem;
+      text-decoration: none; transition: opacity .2s, transform .2s;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(99,130,255,0.1); border: 1px solid var(--border);
+      border-radius: 99px; padding: .35rem 1rem;
+      font-size: .8rem; color: var(--accent2); margin-bottom: 2rem;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp .7s .1s ease both;
+      margin-bottom: 1.25rem;
+    }
+    .hero p {
+      font-size: 1.2rem; color: var(--muted); max-width: 580px; margin: 0 auto 2.5rem;
+      animation: fadeUp .7s .2s ease both;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .7s .3s ease both;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff; padding: .85rem 2rem;
+      border-radius: 10px; font-weight: 700; font-size: 1rem;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .5rem;
+      transition: all .2s; box-shadow: 0 0 30px rgba(99,130,255,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(99,130,255,0.6); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); padding: .85rem 2rem;
+      border-radius: 10px; font-weight: 600; font-size: 1rem;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .5rem;
+      transition: all .2s;
+    }
+    .btn-secondary:hover { background: var(--glow); border-color: var(--accent); }
+
+    .hero-sub {
+      margin-top: 2rem; font-size: .8rem; color: var(--muted);
+      animation: fadeUp .7s .4s ease both;
+    }
+
+    /* ── Terminal demo ── */
+    .terminal-wrap {
+      max-width: 720px; margin: 3rem auto 0;
+      animation: fadeUp .7s .5s ease both;
+    }
+    .terminal {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 60px rgba(99,130,255,0.1);
+    }
+    .terminal-bar {
+      background: #161b22; padding: .7rem 1rem;
+      display: flex; align-items: center; gap: .4rem;
+      border-bottom: 1px solid var(--border2);
+    }
+    .tb-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .tb-dot:nth-child(1){ background: #ff5f56; }
+    .tb-dot:nth-child(2){ background: #ffbd2e; }
+    .tb-dot:nth-child(3){ background: #27c93f; }
+    .tb-url {
+      flex: 1; background: #0d1117; border: 1px solid var(--border2);
+      border-radius: 6px; padding: .25rem .75rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+      color: var(--muted); margin: 0 1rem; text-align: center;
+    }
+    .terminal-body { padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.8; }
+    .t-dim  { color: #3d4d6a; }
+    .t-user { color: var(--accent2); }
+    .t-agent{ color: var(--green); }
+    .t-tool { color: var(--accent3); }
+    .t-result{ color: #e2e8f0; }
+    .t-tag  { background: rgba(52,211,153,0.1); color: var(--green); padding: .1em .4em; border-radius: 4px; font-size: .7rem; }
+    .t-tag.warn { background: rgba(248,113,113,0.1); color: var(--red); }
+
+    /* ── Setup section ── */
+    .section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: .75rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+      line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+
+    /* ── Steps ── */
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .step {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 14px; padding: 1.75rem;
+      transition: border-color .2s, transform .2s;
+      backdrop-filter: blur(10px);
+    }
+    .step:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .9rem; margin-bottom: 1rem;
+    }
+    .step h3 { font-weight: 700; margin-bottom: .4rem; font-size: 1rem; }
+    .step p { color: var(--muted); font-size: .875rem; }
+    .step code {
+      display: block; margin-top: .75rem;
+      background: rgba(99,130,255,0.08); border: 1px solid var(--border2);
+      border-radius: 6px; padding: .5rem .75rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--accent3);
+    }
+
+    .setup-note {
+      margin-top: 2rem; background: rgba(52,211,153,0.05);
+      border: 1px solid rgba(52,211,153,0.2); border-radius: 10px;
+      padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+      color: var(--green); font-size: .9rem;
+    }
+    .setup-note strong { color: #fff; }
+
+    /* ── Features ── */
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .feat {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 14px; padding: 1.75rem; backdrop-filter: blur(10px);
+      transition: border-color .2s, transform .2s;
+    }
+    .feat:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .feat-icon {
+      font-size: 2rem; margin-bottom: 1rem;
+      display: block;
+    }
+    .feat h3 { font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem; }
+    .feat p { color: var(--muted); font-size: .875rem; line-height: 1.7; }
+    .feat-badge {
+      display: inline-block; margin-top: .75rem;
+      background: rgba(99,130,255,0.1); border: 1px solid var(--border);
+      border-radius: 99px; padding: .2rem .7rem;
+      font-size: .7rem; color: var(--accent2); font-weight: 600;
+    }
+    .feat-badge.new { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.2); color: var(--green); }
+
+    /* ── Browser Extension spotlight ── */
+    .extension-card {
+      background: linear-gradient(135deg, rgba(15,22,40,0.9), rgba(22,15,40,0.9));
+      border: 1px solid var(--border);
+      border-radius: 18px; padding: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: center; margin-top: 4rem;
+      backdrop-filter: blur(20px);
+    }
+    @media(max-width:700px){ .extension-card { grid-template-columns: 1fr; } }
+    .ext-title {
+      font-size: 1.8rem; font-weight: 800; line-height: 1.2;
+      margin-bottom: 1rem; letter-spacing: -0.02em;
+    }
+    .ext-desc { color: var(--muted); font-size: .95rem; line-height: 1.8; margin-bottom: 1.5rem; }
+    .ext-list { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+    .ext-list li { display: flex; align-items: center; gap: .6rem; font-size: .875rem; color: var(--text); }
+    .ext-list li::before { content: '→'; color: var(--green); font-weight: 700; }
+    .ext-visual {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .ext-visual-bar {
+      background: #161b22; padding: .6rem 1rem;
+      display: flex; align-items: center; gap: .4rem;
+      border-bottom: 1px solid var(--border2);
+    }
+    .ext-tabs {
+      display: flex; gap: .3rem; flex: 1; margin: 0 .5rem;
+    }
+    .ext-tab {
+      background: #0d1117; border: 1px solid var(--border2);
+      border-radius: 4px; padding: .2rem .6rem;
+      font-size: .65rem; color: var(--muted);
+    }
+    .ext-tab.active { background: var(--bg3); color: var(--text); border-color: var(--accent); }
+    .ext-body { padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: .72rem; line-height: 1.9; }
+
+    /* ── Trust Shield ── */
+    .shield-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 2.5rem; margin-top: 4rem;
+      backdrop-filter: blur(20px);
+    }
+    .shield-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem; background: rgba(99,130,255,0.05);
+      border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem;
+    }
+    .shield-label { font-weight: 700; font-size: 1rem; }
+    .shield-sub { font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+    .toggle {
+      width: 52px; height: 28px; border-radius: 99px;
+      background: var(--accent); position: relative; cursor: pointer;
+      box-shadow: 0 0 20px rgba(99,130,255,0.5); transition: background .2s;
+    }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 27px;
+      width: 22px; height: 22px; border-radius: 50%; background: #fff;
+      transition: left .2s; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .toggle.off { background: #1e2535; }
+    .toggle.off::after { left: 3px; }
+    .shield-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+    .slevel {
+      background: rgba(15,22,40,0.8); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 1rem; font-size: .8rem;
+    }
+    .slevel .sl-name { font-weight: 700; margin-bottom: .3rem; }
+    .slevel .sl-desc { color: var(--muted); font-size: .75rem; }
+    .slevel.on .sl-name  { color: var(--green); }
+    .slevel.mid .sl-name { color: #f59e0b; }
+    .slevel.off .sl-name { color: var(--red); }
+
+    /* ── Comparison table ── */
+    .compare-wrap { margin-top: 3rem; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    thead th {
+      padding: 1rem 1.25rem; text-align: left;
+      background: var(--bg3); border-bottom: 2px solid var(--border);
+      font-weight: 700; font-size: .8rem; letter-spacing: .05em; text-transform: uppercase;
+    }
+    thead th:first-child { border-radius: 10px 0 0 0; }
+    thead th:last-child  { border-radius: 0 10px 0 0; }
+    thead th.wc { color: var(--accent); }
+    tbody tr { border-bottom: 1px solid var(--border2); transition: background .15s; }
+    tbody tr:hover { background: var(--glow); }
+    td { padding: 1rem 1.25rem; color: var(--muted); }
+    td:first-child { color: var(--text); font-weight: 500; }
+    .ck { color: var(--green); font-size: 1.1rem; }
+    .cx { color: var(--red); }
+    .cw { color: #f59e0b; }
+    td.wcc { color: var(--accent2); font-weight: 700; }
+
+    /* ── Ecosystem ── */
+    .ecosystem {
+      display: flex; gap: 0; margin-top: 3rem; overflow: hidden;
+      border: 1px solid var(--border); border-radius: 14px;
+    }
+    .eco-node {
+      flex: 1; padding: 1.5rem;
+      border-right: 1px solid var(--border2);
+    }
+    .eco-node:last-child { border-right: none; }
+    .eco-node.active { background: rgba(99,130,255,0.07); }
+    .eco-layer { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    .eco-name { font-weight: 800; font-size: 1rem; margin-bottom: .25rem; }
+    .eco-desc { font-size: .75rem; color: var(--muted); }
+    .eco-tag { display: inline-block; margin-top: .5rem; font-size: .65rem; padding: .15em .5em; border-radius: 4px; font-weight: 600; }
+    .eco-tag.c   { background: rgba(52,211,153,0.1); color: var(--green); }
+    .eco-tag.go  { background: rgba(56,189,248,0.1); color: var(--accent3); }
+    .eco-tag.py  { background: rgba(251,191,36,0.1); color: #fbbf24; }
+    .eco-tag.ts  { background: rgba(99,130,255,0.1); color: var(--accent); }
+
+    /* ── Testimonials ── */
+    .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .tcard {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(10px);
+    }
+    .tcard blockquote { color: var(--text); font-size: .9rem; line-height: 1.7; margin-bottom: 1rem; font-style: italic; }
+    .tcard cite { display: flex; align-items: center; gap: .5rem; font-size: .8rem; color: var(--muted); font-style: normal; }
+    .t-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center; padding: 6rem 2rem;
+      border-top: 1px solid var(--border2);
+    }
+    .cta-title { font-size: clamp(2rem,4vw,3.5rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 1rem; }
+    .cta-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: 1.05rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border2);
+      padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      font-size: .8rem; color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; }
+
+    /* ── Dividers ── */
+    .divider { border: none; border-top: 1px solid var(--border2); margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <img src="assets/logo.svg" alt="WebClaw Logo" style="width: 38px; height: 38px;" /> WebClaw
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#setup">Setup</a>
+      <a href="#extension">Extension</a>
+      <a href="#compare">Compare</a>
+      <a href="#ecosystem">Ecosystem</a>
+    </div>
+    <a class="nav-cta" href="https://github.com/Vasanthadithya-mundrathi/webclaw" id="nav-github">⭐ Star on GitHub</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now in development · Part of the Clawland ecosystem
+    </div>
+    <h1>Your AI Agent.<br/>Runs in the Browser.</h1>
+    <p>
+      WebClaw is the world's first browser-native AI agent with <strong>WebGPU compute</strong>,
+      <strong>self-evolving gene strategies</strong>, and <strong>full browser tab control</strong>.
+      Zero install. Live in 30 seconds.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#setup" id="hero-get-started">🚀 Get Started — 30 Seconds</a>
+      <a class="btn-secondary" href="https://github.com/Vasanthadithya-mundrathi/webclaw" id="hero-github">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.42-1.29.76-1.59-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.004 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+    <p class="hero-sub">No Docker. No Node install required. Just a browser with WebGPU support.</p>
+
+    <!-- Mini terminal demo -->
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="tb-dot"></div><div class="tb-dot"></div><div class="tb-dot"></div>
+          <div class="tb-url">webclaw.ai · Your AI Agent</div>
+        </div>
+        <div class="terminal-body">
+          <span class="t-dim">[ WebClaw v1.0 · WebGPU ✓ · OPFS Workspace loaded ]</span><br/><br/>
+          <span class="t-user">You →</span> <span class="t-result">Research the top 5 AI agent frameworks in 2026 and save a summary note</span><br/><br/>
+          <span class="t-agent">Agent →</span> <span class="t-result">Searching the web…</span><br/>
+          <span class="t-tool">  ▸ web_search</span> <span class="t-result">"top AI agent frameworks 2026"</span> <span class="t-tag">EXTERNAL</span><br/>
+          <span class="t-tool">  ▸ web_fetch</span>  <span class="t-result">https://example.com/ai-agents …</span> <span class="t-tag">EXTERNAL</span><br/>
+          <span class="t-tool">  ▸ webgpu_embed</span> <span class="t-result">vectorizing 4 documents …</span> <span class="t-tag new" style="background:rgba(99,130,255,.1);color:var(--accent2)">WEBGPU</span><br/>
+          <span class="t-tool">  ▸ workspace_write</span> <span class="t-result">MEMORY.md → "AI Frameworks 2026"</span> <span class="t-tag">TRUSTED</span><br/><br/>
+          <span class="t-agent">Agent →</span> <span class="t-result">Done! Saved your research note. Top picks: OpenClaw, WebClaw, LangGraph…</span><br/>
+          <span class="t-dim">  ✦ Capsule solidified → Gene confidence +0.04</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- SETUP SECTION -->
+  <section class="section" id="setup">
+    <div class="section-inner">
+      <p class="section-label">⚡ Setup</p>
+      <h2 class="section-title">Running in 30 seconds.<br/>No seriously, 30 seconds.</h2>
+      <p class="section-sub">OpenClaw takes 20–40 minutes to set up. WebClaw takes less time than making a coffee.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Open WebClaw</h3>
+          <p>Go to webclaw.ai in Chrome, Edge, or Firefox. No download, no install, no Docker.</p>
+          <code>webclaw.ai</code>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Enter your API key</h3>
+          <p>Paste one API key (OpenAI, Anthropic, Gemini, Groq — any works). Keys stay in your browser only.</p>
+          <code>sk-... or claude-... ✓</code>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Start chatting</h3>
+          <p>Your workspace is created automatically. IDENTITY.md, USER.md, MEMORY.md — all in your browser.</p>
+          <code>Agent: "Hi! What can I do for you?"</code>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>(Optional) Add channels</h3>
+          <p>Deploy the 10-line backend in one click to get Telegram / Discord. Or skip — the browser agent works standalone.</p>
+          <code>Deploy to Fly.io →</code>
+        </div>
+      </div>
+
+      <div class="setup-note">
+        <span style="font-size:1.5rem">✅</span>
+        <div><strong>Already using OpenClaw?</strong> Import your <code style="color:var(--accent3)">~/.openclaw/</code> workspace in one click — your IDENTITY.md, MEMORY.md, and compatible skills transfer instantly.</div>
+      </div>
+
+      <!-- Local dev -->
+      <div style="margin-top:2rem;">
+        <p style="font-size:.875rem;color:var(--muted);margin-bottom:.75rem;">For developers — local setup:</p>
+        <div class="terminal" style="max-width:560px;">
+          <div class="terminal-bar">
+            <div class="tb-dot"></div><div class="tb-dot"></div><div class="tb-dot"></div>
+            <div class="tb-url" style="font-size:.7rem;">Terminal</div>
+          </div>
+          <div class="terminal-body" style="padding:1rem;">
+            <span class="t-dim"># Clone and run in under 60 seconds</span><br/>
+            <span class="t-result">git clone https://github.com/Vasanthadithya-mundrathi/webclaw</span><br/>
+            <span class="t-result">cd webclaw && ./setup.sh</span><br/><br/>
+            <span class="t-dim"># Opens browser automatically at localhost:5173</span><br/>
+            <span class="t-agent">✓ WebClaw running at http://localhost:5173</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <p class="section-label">🧠 Features</p>
+      <h2 class="section-title">Everything OpenClaw does.<br/>In your browser.</h2>
+      <p class="section-sub">WebClaw brings the power of a full agentic runtime to any device with a browser — adding things OpenClaw never could.</p>
+
+      <div class="features">
+        <div class="feat">
+          <span class="feat-icon">🎮</span>
+          <h3>Full Browser Tab Control</h3>
+          <p>The WebClaw browser extension gives your agent access to all your tabs — read page content, click elements, fill forms, take screenshots, and automate any website. Just like OpenClaw's CDP, but no external tooling needed.</p>
+          <span class="feat-badge new">Extension Feature</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">⚡</span>
+          <h3>WebGPU-Accelerated Compute</h3>
+          <p>Vector indexing, semantic search, and embeddings run at GPU speed — entirely in your browser. Up to 30x faster than JavaScript alone. Your personal knowledge base searches in milliseconds.</p>
+          <span class="feat-badge new">World First</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🧬</span>
+          <h3>Gene Evolution Protocol</h3>
+          <p>WebClaw learns from every task. Successful strategies are solidified into reusable "genes" that make your agent smarter over time. Ported from PicoClaw's CGEP with 6 seed genes and confidence scoring.</p>
+          <span class="feat-badge new">Self-Evolving</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🔒</span>
+          <h3>Trust Shield</h3>
+          <p>Toggle security on or off. When ON, web content is tagged [UNTRUSTED] and can't modify your workspace or send messages without your approval. Per-skill permission levels: sandbox, confirm, or trusted.</p>
+          <span class="feat-badge">Toggle ON/OFF</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">💾</span>
+          <h3>OpenClaw-Compatible Workspace</h3>
+          <p>Your workspace lives in your browser's OPFS filesystem — IDENTITY.md, USER.md, MEMORY.md, AGENTS.md. Same structure as OpenClaw and PicoClaw. Import your existing workspace in one click.</p>
+          <span class="feat-badge">Migration Ready</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">📡</span>
+          <h3>Channels via Thin Backend</h3>
+          <p>Telegram, Discord, and Slack work through a 10-line backend you can deploy to Fly.io, Railway, or Render in one click. Or skip it — WebClaw works standalone in the browser.</p>
+          <span class="feat-badge">Optional</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🔌</span>
+          <h3>Skills Ecosystem</h3>
+          <p>Install markdown skill files from any Git repo. Compatible with API-only OpenClaw skills via shim. Bundled: web-research, summarize, weather, skill-creator, datacenter-monitoring.</p>
+          <span class="feat-badge">OpenClaw Shim</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">📴</span>
+          <h3>PWA + Offline Mode</h3>
+          <p>Install WebClaw as a Progressive Web App. Your workspace and bundled skills are cached for offline use. Cron jobs run on the backend even when your browser is closed.</p>
+          <span class="feat-badge">PWA Ready</span>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">🌐</span>
+          <h3>20+ LLM Providers</h3>
+          <p>OpenAI, Anthropic, Gemini, Groq, OpenRouter, DeepSeek, Zhipu, Ollama, vLLM and more — all from a single unified adapter. Switch models per-task. API keys never leave your browser.</p>
+          <span class="feat-badge">Your keys, your data</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BROWSER EXTENSION SPOTLIGHT -->
+  <section class="section" id="extension">
+    <div class="section-inner">
+      <p class="section-label">🎮 Browser Extension</p>
+      <h2 class="section-title">Your agent can see and control every tab.</h2>
+      <p class="section-sub">The WebClaw browser extension unleashes RPA-style automation — without CDP, without external tooling, without leaving the browser.</p>
+
+      <div class="extension-card">
+        <div>
+          <div class="ext-title">Tab control.<br/>Form filling.<br/>Web scraping.</div>
+          <p class="ext-desc">
+            Install the WebClaw extension and your agent gains access to all your browser tabs.
+            It can read any page, click any button, fill any form — just like OpenClaw's Chrome DevTools Protocol integration, but entirely built into the browser. No extra setup.
+          </p>
+          <ul class="ext-list">
+            <li>Read DOM content from any tab</li>
+            <li>Click elements, fill forms, scroll</li>
+            <li>Take screenshots of any tab</li>
+            <li>Monitor tab URL changes and events</li>
+            <li>Inject scripts for advanced automation</li>
+            <li>Works with any website (with Trust Shield)</li>
+          </ul>
+        </div>
+        <div class="ext-visual">
+          <div class="ext-visual-bar">
+            <div class="tb-dot" style="background:#ff5f56;width:10px;height:10px;"></div>
+            <div class="tb-dot" style="background:#ffbd2e;width:10px;height:10px;"></div>
+            <div class="tb-dot" style="background:#27c93f;width:10px;height:10px;"></div>
+            <div class="ext-tabs">
+              <div class="ext-tab active">WebClaw Agent</div>
+              <div class="ext-tab">Gmail</div>
+              <div class="ext-tab">Linear</div>
+              <div class="ext-tab">+3</div>
+            </div>
+          </div>
+          <div class="ext-body">
+            <span style="color:var(--accent2)">You →</span> <span style="color:#e2e8f0">Summarize my Gmail inbox<br/>&nbsp;&nbsp;and create Linear tasks</span><br/><br/>
+            <span style="color:var(--green)">Agent →</span> <span style="color:#e2e8f0">Reading Gmail tab…</span><br/>
+            <span style="color:var(--accent3)">  ▸ tab_read</span> <span style="color:var(--muted)">Gmail (Tab 2) ✓</span><br/>
+            <span style="color:var(--muted)">  Found 14 unread emails</span><br/><br/>
+            <span style="color:var(--accent3)">  ▸ tab_navigate</span> <span style="color:var(--muted)">linear.app/new</span><br/>
+            <span style="color:var(--accent3)">  ▸ tab_fill_form</span> <span style="color:var(--muted)">Creating 3 tasks…</span><br/><br/>
+            <span style="color:var(--green)">Agent →</span> <span style="color:#e2e8f0">Done! 3 tasks created in Linear</span><br/>
+            <span style="color:#3d4d6a">  🔒 Trust Shield: 2 confirmations shown</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- TRUST SHIELD -->
+  <section class="section">
+    <div class="section-inner">
+      <p class="section-label">🔒 Security</p>
+      <h2 class="section-title">Security you control.<br/>Not security that controls you.</h2>
+      <p class="section-sub">OpenClaw's biggest known weakness is unstructured trust. WebClaw ships with Trust Shield — a simple toggle that gives you full control.</p>
+
+      <div class="shield-card">
+        <div class="shield-toggle-row">
+          <div>
+            <div class="shield-label">🛡️ Trust Shield</div>
+            <div class="shield-sub">Controls whether external content can modify your workspace or trigger actions</div>
+          </div>
+          <div class="toggle" id="shieldToggle" onclick="toggleShield(this)"></div>
+        </div>
+        <div class="shield-levels">
+          <div class="slevel on">
+            <div class="sl-name">SANDBOXED</div>
+            <div class="sl-desc">Web content can't write workspace or trigger channels. Read-only from external sources.</div>
+          </div>
+          <div class="slevel mid">
+            <div class="sl-name">CONFIRM</div>
+            <div class="sl-desc">High-risk actions show an approval modal. You stay in the loop for anything important.</div>
+          </div>
+          <div class="slevel off">
+            <div class="sl-name">TRUSTED (OFF)</div>
+            <div class="sl-desc">Full autonomous mode. Tools run without asking. Use only with trusted inputs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- COMPARE -->
+  <section class="section" id="compare">
+    <div class="section-inner">
+      <p class="section-label">📊 Comparison</p>
+      <h2 class="section-title">How WebClaw stacks up.</h2>
+      <p class="section-sub">The Clawland family covers every layer — from $2 microcontrollers to browser-native cloud agents.</p>
+      <div class="compare-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>OpenClaw</th>
+              <th>PicoClaw</th>
+              <th class="wc">WebClaw ✦</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Setup time</td><td>20–40 min</td><td>5 min (binary)</td><td class="wcc">30 seconds ✦</td></tr>
+            <tr><td>Install required</td><td class="cw">Node + npm</td><td class="cw">Go binary</td><td class="ck wcc">Zero install ✦</td></tr>
+            <tr><td>Multi-step web research</td><td class="ck">✓</td><td class="cw">⚠ Limited</td><td class="ck wcc">✓ + WebGPU vectors</td></tr>
+            <tr><td>Browser tab control</td><td class="cw">⚠ Via CDP</td><td class="cx">✗</td><td class="ck wcc">✓ Native extension</td></tr>
+            <tr><td>WebGPU compute</td><td class="cx">✗</td><td class="cx">✗</td><td class="ck wcc">✓ World first</td></tr>
+            <tr><td>Gene Evolution (CGEP)</td><td class="cx">✗</td><td class="ck">✓</td><td class="ck wcc">✓ JS port</td></tr>
+            <tr><td>Rich Canvas UI</td><td class="ck">✓</td><td class="cx">✗</td><td class="ck wcc">✓ React + WebGPU</td></tr>
+            <tr><td>Trust Shield toggle</td><td class="cx">✗</td><td class="cw">⚠ By constraints</td><td class="ck wcc">✓ On/Off + per-skill</td></tr>
+            <tr><td>OpenClaw workspace import</td><td>—</td><td class="ck">✓ migrate cmd</td><td class="ck wcc">✓ One-click wizard</td></tr>
+            <tr><td>Edge IoT hardware</td><td class="cx">✗</td><td class="ck">✓ $10 boards</td><td class="cx">Browser-first</td></tr>
+            <tr><td>LLM providers</td><td>15+</td><td>7+</td><td class="wcc">20+ ✦</td></tr>
+            <tr><td>Hardware cost</td><td>Mac Mini+</td><td>$10 SBCs</td><td class="ck wcc">What you have ✦</td></tr>
+            <tr><td>Always-on cron jobs</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck wcc">✓ Via thin backend</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- ECOSYSTEM -->
+  <section class="section" id="ecosystem">
+    <div class="section-inner">
+      <p class="section-label">🌐 Ecosystem</p>
+      <h2 class="section-title">Part of the Clawland family.</h2>
+      <p class="section-sub">WebClaw is the browser-native L3 layer in the open-source Clawland AI stack — from $2 microcontrollers to cloud orchestration.</p>
+      <div class="ecosystem">
+        <div class="eco-node">
+          <div class="eco-layer">L0 · MCU</div>
+          <div class="eco-name">MicroClaw</div>
+          <div class="eco-desc">Sensor agents on $2 microcontrollers</div>
+          <span class="eco-tag c">C / Rust</span>
+        </div>
+        <div class="eco-node">
+          <div class="eco-layer">L1 · Edge</div>
+          <div class="eco-name">PicoClaw</div>
+          <div class="eco-desc">Ultra-lightweight on $10 SBCs. Gene evolution pioneer.</div>
+          <span class="eco-tag go">Go</span>
+        </div>
+        <div class="eco-node">
+          <div class="eco-layer">L2 · Regional</div>
+          <div class="eco-name">NanoClaw</div>
+          <div class="eco-desc">Regional gateway on $50 SBCs</div>
+          <span class="eco-tag py">Python</span>
+        </div>
+        <div class="eco-node">
+          <div class="eco-layer">L3 · Cloud</div>
+          <div class="eco-name">MoltClaw</div>
+          <div class="eco-desc">Fleet management cloud gateway</div>
+          <span class="eco-tag ts">TypeScript</span>
+        </div>
+        <div class="eco-node active" style="border:1px solid var(--accent);">
+          <div class="eco-layer" style="color:var(--accent)">L3 · Browser</div>
+          <div class="eco-name" style="color:var(--accent)">WebClaw ✦</div>
+          <div class="eco-desc">Browser-native. WebGPU. Zero install.</div>
+          <span class="eco-tag ts">TypeScript + WebGPU</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <p class="section-label" style="text-align:center">✦ Launch</p>
+    <h2 class="cta-title">The agent that runs<br/>anywhere you do.</h2>
+    <p class="cta-sub">Zero install. WebGPU compute. Self-evolving. Your data stays yours.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#setup" id="cta-get-started">🚀 Get Started Free</a>
+      <a class="btn-secondary" href="https://github.com/Vasanthadithya-mundrathi/webclaw" id="cta-github">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.42-1.29.76-1.59-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.004 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        ⭐ Star on GitHub
+      </a>
+    </div>
+    <p style="margin-top:1.5rem;font-size:.8rem;color:var(--muted)">
+      Part of <a href="https://github.com/Clawland-AI" style="color:var(--accent);text-decoration:none">Clawland-AI</a> · Built in the open · MIT License
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;color:var(--text)">
+      <img src="assets/logo.svg" alt="WebClaw Logo" style="width: 28px; height: 28px;" /> WebClaw
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/Vasanthadithya-mundrathi/webclaw">GitHub</a>
+      <a href="https://github.com/Clawland-AI">Clawland-AI</a>
+      <a href="https://github.com/openclaw/openclaw">OpenClaw</a>
+      <a href="https://github.com/Clawland-AI/picclaw">PicoClaw</a>
+    </div>
+    <div>MIT License · Part of the Clawland ecosystem</div>
+  </footer>
+
+  <script>
+    // Trust shield toggle demo
+    function toggleShield(el) {
+      el.classList.toggle('off');
+      const isOff = el.classList.contains('off');
+      document.querySelectorAll('.slevel').forEach((s, i) => {
+        if (isOff) {
+          s.style.opacity = ['0.4','0.4','1'][i];
+        } else {
+          s.style.opacity = ['1','1','0.5'][i];
+        }
+      });
+    }
+
+    // Animate cards on scroll
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.feat, .step, .tcard, .eco-node, .slevel').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity .5s ease, transform .5s ease';
+      observer.observe(el);
+    });
+    // Trigger visible
+    document.addEventListener('DOMContentLoaded', () => {
+      const style = document.createElement('style');
+      style.textContent = '.visible { opacity: 1 !important; transform: none !important; }';
+      document.head.appendChild(style);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "ClawOS — WebClaw Native Messaging Host",
+  "version": "1.0.0",
+  "description": "On-demand local OS bridge for WebClaw. Run: node install.js to register with Chrome.",
+  "main": "index.js",
+  "scripts": {
+    "install-host": "node install.js",
+    "start": "node index.js",
+    "start:yolo": "node index.js --yolo"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

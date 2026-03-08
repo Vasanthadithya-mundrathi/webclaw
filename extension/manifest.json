@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "WebClaw — Browser-Native AI Agent",
+  "version": "0.1.0",
+  "description": "Autonomous AI agent with WebGPU compute and browser tab control.",
+  "permissions": [
+    "tabs",
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "scripting",
+    "search"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "Open WebClaw Side Panel"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  }
+}

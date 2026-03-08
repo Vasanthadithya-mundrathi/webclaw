@@ -430,7 +430,7 @@
   <section class="hero">
     <div class="hero-badge">
       <span class="dot"></span>
-      Now in development · Part of the Clawland ecosystem
+      Independent student project · Inspired by OpenClaw &amp; PicoClaw
     </div>
     <h1>Your AI Agent.<br/>Runs in the Browser.</h1>
     <p>
@@ -445,7 +445,7 @@
         View on GitHub
       </a>
     </div>
-    <p class="hero-sub">No Docker. No Node install required. Just a browser with WebGPU support.</p>
+    <p class="hero-sub">No Docker. No Node install required. Just a browser with WebGPU support. Built by <strong>Vasanthadithya Mundrathi</strong>.</p>
 
     <!-- Mini terminal demo -->
     <div class="terminal-wrap">
@@ -506,8 +506,8 @@
       </div>
 
       <div class="setup-note">
-        <span style="font-size:1.5rem">✅</span>
-        <div><strong>Already using OpenClaw?</strong> Import your <code style="color:var(--accent3)">~/.openclaw/</code> workspace in one click — your IDENTITY.md, MEMORY.md, and compatible skills transfer instantly.</div>
+        <span style="font-size:1.5rem">💡</span>
+        <div><strong>Coming from OpenClaw?</strong> Your workspace files (<code style="color:var(--accent3)">IDENTITY.md</code>, <code style="color:var(--accent3)">MEMORY.md</code>) are compatible with WebClaw — the file format is the same. Upload them via the Workspace panel.</div>
       </div>
 
       <!-- Local dev -->
@@ -723,43 +723,47 @@
 
   <hr class="divider"/>
 
-  <!-- ECOSYSTEM -->
+  <!-- INSPIRATION -->
   <section class="section" id="ecosystem">
     <div class="section-inner">
-      <p class="section-label">🌐 Ecosystem</p>
-      <h2 class="section-title">Part of the Clawland family.</h2>
-      <p class="section-sub">WebClaw is the browser-native L3 layer in the open-source Clawland AI stack — from $2 microcontrollers to cloud orchestration.</p>
+      <p class="section-label">🌱 Inspiration</p>
+      <h2 class="section-title">Built on the shoulders<br/>of giants.</h2>
+      <p class="section-sub">WebClaw is an independent student project inspired by — and deeply grateful for — the open-source Clawland AI family.</p>
       <div class="ecosystem">
         <div class="eco-node">
-          <div class="eco-layer">L0 · MCU</div>
-          <div class="eco-name">MicroClaw</div>
-          <div class="eco-desc">Sensor agents on $2 microcontrollers</div>
-          <span class="eco-tag c">C / Rust</span>
-        </div>
-        <div class="eco-node">
-          <div class="eco-layer">L1 · Edge</div>
+          <div class="eco-layer">Edge · Go</div>
           <div class="eco-name">PicoClaw</div>
-          <div class="eco-desc">Ultra-lightweight on $10 SBCs. Gene evolution pioneer.</div>
+          <div class="eco-desc">Ultra-lightweight on $10 SBCs. Pioneered the CGEP Gene Evolution Protocol that WebClaw ports to the browser.</div>
           <span class="eco-tag go">Go</span>
         </div>
         <div class="eco-node">
-          <div class="eco-layer">L2 · Regional</div>
-          <div class="eco-name">NanoClaw</div>
-          <div class="eco-desc">Regional gateway on $50 SBCs</div>
-          <span class="eco-tag py">Python</span>
-        </div>
-        <div class="eco-node">
-          <div class="eco-layer">L3 · Cloud</div>
-          <div class="eco-name">MoltClaw</div>
-          <div class="eco-desc">Fleet management cloud gateway</div>
+          <div class="eco-layer">Cloud · Node.js</div>
+          <div class="eco-name">OpenClaw</div>
+          <div class="eco-desc">The full-featured AI agent runtime. Its workspace format, skill philosophy, and architecture directly inspired WebClaw's design.</div>
           <span class="eco-tag ts">TypeScript</span>
         </div>
         <div class="eco-node active" style="border:1px solid var(--accent);">
-          <div class="eco-layer" style="color:var(--accent)">L3 · Browser</div>
+          <div class="eco-layer" style="color:var(--accent)">Browser · Student Project</div>
           <div class="eco-name" style="color:var(--accent)">WebClaw ✦</div>
-          <div class="eco-desc">Browser-native. WebGPU. Zero install.</div>
+          <div class="eco-desc">Inspired by both. Explores a new direction: WebGPU compute, zero-install, peer mesh — entirely in the browser.</div>
           <span class="eco-tag ts">TypeScript + WebGPU</span>
         </div>
+      </div>
+
+      <!-- Request to join -->
+      <div style="margin-top:3rem; background: linear-gradient(135deg, rgba(99,130,255,0.07), rgba(122,77,250,0.07)); border:1px solid rgba(99,130,255,0.2); border-radius:18px; padding:2.5rem; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:1rem;">🙏</div>
+        <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:.75rem;">A respectful request</h3>
+        <p style="color:var(--muted); max-width:600px; margin:0 auto 1.5rem; font-size:.95rem; line-height:1.8;">
+          WebClaw is not officially part of the Clawland ecosystem — yet. It's a student-led solo project, built by one person who learned AI agent architecture by reading through the OpenClaw and PicoClaw codebases.
+          <br/><br/>
+          The WebGPU compute approach, zero-install browser runtime, and Claw Mesh peer architecture are new ideas that don't exist in the current Clawland stack. If the Clawland maintainers feel this belongs in the family — whether as a contribution, a fork, or a formal collaboration — I'd be deeply honored.
+        </p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+          <a class="btn-primary" href="https://github.com/Vasanthadithya-mundrathi/webclaw" style="font-size:.875rem; padding:.65rem 1.5rem;">⭐ See the code</a>
+          <a class="btn-secondary" href="https://github.com/Vasanthadithya-mundrathi/Blog/blob/main/posts/2026-03-08-webclaw-browser-native-agent.md" style="font-size:.875rem; padding:.65rem 1.5rem;">📖 Read the full story</a>
+        </div>
+        <p style="margin-top:1.25rem; font-size:.8rem; color:var(--muted);">By <strong style="color:var(--text)">Vasanthadithya Mundrathi</strong> · <a href="mailto:vasanthfeb13@gmail.com" style="color:var(--accent); text-decoration:none;">vasanthfeb13@gmail.com</a></p>
       </div>
     </div>
   </section>
@@ -779,7 +783,7 @@
       </a>
     </div>
     <p style="margin-top:1.5rem;font-size:.8rem;color:var(--muted)">
-      Part of <a href="https://github.com/Clawland-AI" style="color:var(--accent);text-decoration:none">Clawland-AI</a> · Built in the open · MIT License
+      Independent open-source project by <a href="mailto:vasanthfeb13@gmail.com" style="color:var(--accent);text-decoration:none">Vasanthadithya Mundrathi</a> · Inspired by <a href="https://github.com/Clawland-AI" style="color:var(--accent);text-decoration:none">Clawland-AI</a> · MIT License
     </p>
   </section>
 
@@ -790,11 +794,11 @@
     </div>
     <div class="footer-links">
       <a href="https://github.com/Vasanthadithya-mundrathi/webclaw">GitHub</a>
-      <a href="https://github.com/Clawland-AI">Clawland-AI</a>
-      <a href="https://github.com/openclaw/openclaw">OpenClaw</a>
-      <a href="https://github.com/Clawland-AI/picclaw">PicoClaw</a>
+      <a href="https://github.com/Vasanthadithya-mundrathi/Blog">Blog</a>
+      <a href="https://github.com/Clawland-AI/picoclaw">PicoClaw ↗</a>
+      <a href="https://github.com/openclaw/openclaw">OpenClaw ↗</a>
     </div>
-    <div>MIT License · Part of the Clawland ecosystem</div>
+    <div>MIT · By <a href="mailto:vasanthfeb13@gmail.com" style="color:var(--muted)">Vasanthadithya Mundrathi</a></div>
   </footer>
 
   <script>

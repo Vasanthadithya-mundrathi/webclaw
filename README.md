@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Browser-native AI agent. WebGPU compute. Claw Mesh. Zero install.</strong><br/>
-  Part of the <a href="https://github.com/Clawland-AI">Clawland ecosystem</a> alongside OpenClaw and PicoClaw.
+  An independent student project inspired by the <a href="https://github.com/Clawland-AI">Clawland ecosystem</a>.
 </p>
 
 <p align="center">
@@ -21,11 +21,13 @@
 
 ## What is WebClaw?
 
-WebClaw is a **browser-native AI agent** — the first in the Clawland family to run entirely inside the browser with no local install required. Open a tab, paste an API key, and your agent is live.
+WebClaw is an experimental **browser-native AI agent** built over the last 2 weeks. It explores what happens when you run an agent entirely inside the browser with no local install required. Open a tab on your laptop, login with your UID, and your agent is live. Want to access it from your phone on the couch? Just open the URL and login with the same UID.
 
-> **WebClaw is a peer mesh of browser agents. The browser is the runtime. The OS is an optional, on-demand extension via Native Messaging. There is no daemon, no config file, no server.**
+> **WebClaw is a peer mesh of browser agents. The browser is the runtime. The OS is an optional, on-demand extension via Native Messaging. There is no daemon, no config file, no server, and absolutely NO OPEN PORTS.**
 
-This is architecturally different from OpenClaw (Node.js daemon) and PicoClaw (Go binary). WebClaw uses browser APIs that have never been applied to AI agents before.
+This is architecturally different from OpenClaw (Node.js daemon) and PicoClaw (Go binary). I built this because I am fundamentally afraid of opening random ports on my only laptop, and I wanted a lightweight way to experiment with agentic meshes without needing a Mac Mini farm.
+
+Read the full story here: [Introducing WebClaw: The Browser-Native AI Mesh](https://vasanthadithya-mundrathi.github.io/Blog/posts/2026/03/11/webclaw-browser-native-mesh/)
 
 ---
 
@@ -65,14 +67,13 @@ This is architecturally different from OpenClaw (Node.js daemon) and PicoClaw (G
 
 | Feature | WebClaw | OpenClaw | PicoClaw |
 |---|---|---|---|
-| **Setup time** | 30 seconds | 20-40 min | 5 min (binary) |
-| **Install required** | ❌ Zero | ✅ Node + npm | ✅ Go binary |
-| **Runtime** | Browser Tab | Node.js daemon | Go binary |
+| **Primary focus** | Browser/Mobile | Cloud/Desktop Runtime | Edge Devices ($10 SBCs) |
+| **Install required** | ❌ Zero (URL + UID) | ✅ Node + npm | ✅ Go binary |
+| **Open Ports** | ❌ Zero | ✅ WebSocket / API | ✅ API |
 | **WebGPU compute** | ✅ World first | ❌ | ❌ |
-| **Gene Evolution (CGEP)** | ✅ JS port | ❌ | ✅ |
+| **Gene Evolution** | ✅ JS port (CGEP) | ❌ | ✅ Pioneer |
 | **Peer mesh agents** | ✅ BroadcastChannel | ❌ | ❌ |
 | **OS bridge** | ✅ Native Messaging | ✅ CDP | ❌ |
-| **Multi-agent** | ✅ Web Workers | ❌ | ❌ |
 
 ---
 
@@ -249,9 +250,9 @@ cd os-agent && npm install && node install.js
 
 ---
 
-## Ecosystem
+## Inspiration: The Clawland Ecosystem
 
-WebClaw is the browser-native `L3` layer in the Clawland AI stack:
+WebClaw is an independent student project, but it is deeply inspired by the open-source Clawland AI stack. They built the foundation that made this project possible:
 
 | Layer | Project | Runtime | Hardware |
 |---|---|---|---|
@@ -259,11 +260,12 @@ WebClaw is the browser-native `L3` layer in the Clawland AI stack:
 | L1 · Edge | PicoClaw | Go | $10 SBCs |
 | L2 · Regional | NanoClaw | Python | $50 SBCs |
 | L3 · Cloud | MoltClaw | TypeScript | Cloud |
-| **L3 · Browser** | **WebClaw ✦** | **Browser** | **Any device** |
 | L4 · Orchestration | OpenClaw | Node.js | Mac Mini+ |
+
+**WebClaw** aims to explore what an `L3 · Browser` layer could look like in a comparable ecosystem.
 
 ---
 
 ## License
 
-MIT — Part of the [Clawland-AI](https://github.com/Clawland-AI) open-source ecosystem.
+MIT — Built by Vasanthadithya Mundrathi. Inspired by the [Clawland-AI](https://github.com/Clawland-AI) open-source ecosystem.
